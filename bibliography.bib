@@ -15,13 +15,12 @@
   year={2014},
   publisher={Springer},
   annote={
-    \setlength{\parskip}{1.5ex}
     Demonstrates a practical, fast, and realistic full key recovery against AES across virtual machines.
     The attack is based on the \name{Flush+Reload} attack from Gullasch \latin{et al.} \cite{gullasch2011cache}.
     It works against any T-table based cipher implementation, but only when the VMs are using same sort of memory
       sharing mechanism such as VMware TPS.
     Key recovery takes about one minute (400,000~encryptions) in a realistic cross-VM setting.
-
+    \par
     The attack assumes the use of the co-location technique invented by Ristenpart \latin{et al.} to move to the same
       host as the target VM.
     Once co-located, it uses a \name{Flush+Reload} attack, which works in three steps:
@@ -31,18 +30,18 @@
       \item \emph{reload} the same memory lines; the cache lines which the target accessed will be cached, and will
         load faster for the attacker.
     \end{enumerate}
-
+    \par
     Specifically, the \name{Flush+Reload} targets accesses of the T table used in the final round of encryption.
     By observing accesses of the final T table, the attacker is able to observe the final-round state of the algorithm
       and can use this information, together with the ciphertext, to recover the key.
-
+    \par
     The attack takes advantage of two isolation leaks which the target system relies on to improve performance: The
       fact that identical memory pages (such as libraries) are usually shared between virtual machines, and the fact
       that L3 cache is usually shared between cores.
     The first property allows the attacker to observe the target's memory access across VMs, the second allows the
       attacker to observe memory access across CPU cores.
     As a result, the attacker and target need only be sharing the same physical host.
-
+    \par
     Irazoqui \latin{et al.} tested their implementation on a consumer VM running VMware ESXi. The target was an
       encryption server which accepted plaintexts and responded with ciphertexts.
     The attack program ran on a different VM on a different core of the same host and was able to send encryption
