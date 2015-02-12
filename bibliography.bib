@@ -7,6 +7,26 @@
   organization={IEEE}
 }
 
+@incollection{ristenpart2009cloud,
+  title={Hey, you, get off of my cloud: exploring information leakage in third-party compute clouds},
+  author={Ristenpart, Thomas and Tromer, Eran and Shacham, Hovav and Savage, Stefan},
+  booktitle={CCS '09 Proceedings of the 16th ACM conference on Computer and communications security},
+  pages={199--212},
+  year={2009},
+  publisher={ACM},
+  annote={
+    \setlength{\parskip}{1.5ex}
+    Describes a method for achieving co-residence with target VMs on the cloud and exploiting information leakage between these VMs using Amazon's EC2 service as an example. The attack takes advantage of the fact that many VMs can be created by the same user, and that there is a possibility that these might run on the same hardware as a target due to the way the VMs share physical resources. Once co-location is achieved, an attacker can use side-channels (namely caches) to get information about the other instances running on the same machine as the malicious VM.  
+    \par
+    A 'map' of the EC2 service was constructed in order improve the likelihood of placing a VM on the same host as the target. By creating multiple instances for each permutation of the creation parameters, the authors observed a trend between internal IP addresses and creation parameters. These internal IP addresses were concluded to be statically associated with physical machines. Use of the created map requires translating the external IP of the target to an internal IP, which is made possible by the DNS service provided by EC2.
+    \par
+    There are multiple ways to check if two instances are co-resident. This can be done by comparing either Dom0 IP addresses or internal IPs and by measuring the round-trip packet times. The Dom0 IP check was used for all subsequent co-location testing as experiments showed that it produced no false positives.
+    \par
+    Two strategies were used to prove that achieving co-residence was possible. The first used a brute-force technique, creating a large number of probes that checked for co-location with any of a large set of targets. This method achieved a reasonable success rate, covering 8.4\% of the targets. A second method monitored a victim server, waiting for it to disappear when not needed, then reappear as a new instance. Based on experimentally observed parallel placement locality (instances launched at around the same time tend to be placed on the same hardware), the attacker then ran many instances using the same creation parameters as the target. This was much more successful, achieving co-residence 40\% of the time.
+    \par
+    Finally, the authors describe attacks which can be carried out on a co-resident VM. By measuring cache usage, an attacker can determine co-location without using the techniques described earlier. Cache usage can also be used to estimate traffic to a web server or measure the length of time between keystrokes for the purpose of recovering a password.
+  }
+  
 @incollection{irazoqui2014wait,
   title={Wait a minute! A fast, {Cross-VM} attack on {AES}},
   author={Irazoqui, Gorka and Inci, Mehmet Sinan and Eisenbarth, Thomas and Sunar, Berk},
