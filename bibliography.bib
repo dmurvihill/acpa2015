@@ -1,0 +1,54 @@
+@inproceedings{gullasch2011cache,
+  title={Cache games--{Bringing} access-based cache attacks on {AES} to practice},
+  author={Gullasch, David and Bangerter, Endre and Krenn, Stephan},
+  booktitle={Security and Privacy (SP), 2011 IEEE Symposium on},
+  pages={490--505},
+  year={2011},
+  organization={IEEE}
+}
+
+@incollection{irazoqui2014wait,
+  title={Wait a minute! A fast, {Cross-VM} attack on {AES}},
+  author={Irazoqui, Gorka and Inci, Mehmet Sinan and Eisenbarth, Thomas and Sunar, Berk},
+  booktitle={Research in Attacks, Intrusions and Defenses},
+  pages={299--319},
+  year={2014},
+  publisher={Springer},
+  annote={
+    \setlength{\parskip}{1.5ex}
+    Demonstrates a practical, fast, and realistic full key recovery against AES across virtual machines.
+    The attack is based on the \name{Flush+Reload} attack from Gullasch \latin{et al.} \cite{gullasch2011cache}.
+    It works against any T-table based cipher implementation, but only when the VMs are using same sort of memory
+      sharing mechanism such as VMware TPS.
+    Key recovery takes about one minute (400,000~encryptions) in a realistic cross-VM setting.
+
+    The attack assumes the use of the co-location technique invented by Ristenpart \latin{et al.} to move to the same
+      host as the target VM.
+    Once co-located, it uses a \name{Flush+Reload} attack, which works in three steps:
+    \begin{enumerate}
+      \item \emph{flush} the cache lines which the attacker wants to observe
+      \item wait for the target to run the interesting fragment of code such as an encryption
+      \item \emph{reload} the same memory lines; the cache lines which the target accessed will be cached, and will
+        load faster for the attacker.
+    \end{enumerate}
+
+    Specifically, the \name{Flush+Reload} targets accesses of the T table used in the final round of encryption.
+    By observing accesses of the final T table, the attacker is able to observe the final-round state of the algorithm
+      and can use this information, together with the ciphertext, to recover the key.
+
+    The attack takes advantage of two isolation leaks which the target system relies on to improve performance: The
+      fact that identical memory pages (such as libraries) are usually shared between virtual machines, and the fact
+      that L3 cache is usually shared between cores.
+    The first property allows the attacker to observe the target's memory access across VMs, the second allows the
+      attacker to observe memory access across CPU cores.
+    As a result, the attacker and target need only be sharing the same physical host.
+
+    Irazoqui \latin{et al.} tested their implementation on a consumer VM running VMware ESXi. The target was an
+      encryption server which accepted plaintexts and responded with ciphertexts.
+    The attack program ran on a different VM on a different core of the same host and was able to send encryption
+      requests to the target.
+    It recovered the full key in 400,000 encryptions --- less than a minute.
+    They also tested their approach and observed even better results in some non cross-VM situations.
+  }
+}
+
