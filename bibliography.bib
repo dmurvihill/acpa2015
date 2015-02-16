@@ -19,7 +19,36 @@
   booktitle={Security and Privacy (SP), 2011 IEEE Symposium on},
   pages={490--505},
   year={2011},
-  organization={IEEE}
+  organization={IEEE},
+  annote={
+    \setlength{\parskip}{1.5ex}
+    Describes an access-driven full-key recovery cache attack on AES.
+    The authors claim it is the first attack to work in Ostvik's~\cite{osvik2006cache} \textit{asynchronous}
+      model --- the online attack phase requires only co-location on the same CPU core and shared memory, but no
+      explicit interactions.
+    It also requires no knowledge of the plaintexts or even the ciphertexts, works against compressed-table
+      implementations for the first time, and can recover a full AES-128 key after observing just 100~encryptions
+      (2.8~seconds) and a three-minute offline analysis phase.
+    \par
+    The cryptanalysis uses a novel attack against the Completely Fair Scheduler (CFS), the scheduler used in the Linux
+      kernel, ``to observe (on average) every single memory access of the victim process.''
+    To make sense of the observed memory accesses, the attacker must train a pair of artificial neural networks on
+      training data collected from a platform that is identical to the target machine.
+    The training data size the authors used was 168,000 encryptions.
+    After the target data is collected during the online phase, the neural networks are used to perform the
+      cryptanalysis.
+    \par
+    The attack is highly dependent on the target platform --- the authors mentioned that any deviation from their Linux
+      kernel running OpenSSL~0.9.8n on a single-core x86 CPU required significant adjustment.
+    They mentioned that even ``minor updates to the operating system'' required the attack to be re-tuned.
+    \par
+    They suggest that porting the attack to target other operating systems would be difficult, especially against
+      proprietary operating systems where the attacker would have to reverse-engineer the scheduler.
+    Multi-core CPUs also present a challenge, because the cache access attack depends on the victim process being
+      preempted while the spy process is running.
+    They suggest that the spy could run on multiple cores, and also try to influence the target to run on certain cores
+      by exploiting the task scheduler or making specific system calls.
+  }
 }
 
 @incollection{irazoqui2014wait,
