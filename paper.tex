@@ -32,7 +32,7 @@ Email: \texttt{\{dm, nhwells\}@wpi.edu}
 \maketitle
 
 \begin{abstract}
-Recent research has demonstrated that cloud services such as Amazon AWS do not provide perfect isolation --- that there
+Recent research has demonstrated that cloud services such as Amazon AWS do not provide perfect isolation~--- that there
   are side channels between virtual machines that reside on the same host.
 In particular, it is possible, under some circumstances, to use cache timing information to perform a full AES key
   recovery against a VM sharing the same cache.
@@ -50,14 +50,14 @@ We would like to interrupt this step in the kill chain, by developing a provisio
 
 
 \begin{itemize}
-	\item Amazon's EC2 service is very popular and used for by variety of customers, some with sensitive data
-	\item This makes VMs on this service a worthwhile target
-	\item Ristenpart et. al have demonstrated that it is possible to create a VM co-resident with a target instance and
-	that existing side-channel attacks can be employed against co-resident instances on the cloud
-	\item We would like to focus on a method to obscure the algorithm by which instances are placed, which would make it
-	significantly harder to achieve co-location
-	\item Alternatively, we could focus on a method which prevents the simple network-based checks used to determine if two instances are co-located.
-
+  \item Amazon's EC2 service is very popular and used for by variety of customers, some with sensitive data.
+  \item This makes VMs on this service a worthwhile target.
+  \item Ristenpart et. al have demonstrated that it is possible to create a VM co-resident with a target instance and
+    that existing side-channel attacks can be employed against co-resident instances on the cloud.
+  \item We would like to focus on a method to obscure the algorithm by which instances are placed, which would make it
+    significantly harder to achieve co-location.
+  \item Alternatively, we could focus on a method which prevents the simple network-based checks used to determine if
+    two instances are co-located.
 \end{itemize}
 
 \section{Background}\label{sec:background}
