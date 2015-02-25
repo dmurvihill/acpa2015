@@ -47,23 +47,17 @@ We would like to interrupt this step in the kill chain, by developing a provisio
 \section{Motivation}
 \todo{Know what you want to do and why that is interesting (maybe with bullet points). But do not write this section until you know what you actually have done so that the motivation fits your work.}
 
-To generate this pdf, you need a latex implementation. I recommend Texniccenter in Windows, but there are others. For your references (the .bib file) jabref is the only helpful editor I have used.
-Refer to sections like this: Section~\ref{sec:background} and to references like this: Ristenpart et al.~\cite{Ristenpart_hey}. \\{\tiny There is also a word template available.}
 
-
-We will stick to the following timeline:
 
 \begin{itemize}
-	\item 2/22: Project goals and outline defined
-	\item 3/1 : Related work identified and described in report.
-	\item 3/15: At least 1/3 of your anticipated work should be completed and documented
-	\item 3/22: At least 2/3 of your anticipated work should be completed and documented
-	\item 3/29: All of your anticipated work should be completed and documented
-	\item 4/5:  Your results and outcomes are now also documented and included in the paper
-	\item 4/12: Final submission of of complete paper for review
-	\item 4/21: Reviews complete
-	\item 4/26: Submission of final version addressing reviewers comments.
-	\item 5/4 : Presentation of your project in class.
+	\item Amazon's EC2 service is very popular and used for by variety of customers, some with sensitive data
+	\item This makes VMs on this service a worthwhile target
+	\item Ristenpart et. al have demonstrated that it is possible to create a VM co-resident with a target instance and
+	that existing side-channel attacks can be employed against co-resident instances on the cloud
+	\item We would like to focus on a method to obscure the algorithm by which instances are placed, which would make it
+	significantly harder to achieve co-location
+	\item Alternatively, we could focus on a method which prevents the simple network-based checks used to determine if two instances are co-located.
+
 \end{itemize}
 
 \section{Background}\label{sec:background}
