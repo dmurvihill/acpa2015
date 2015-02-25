@@ -1,0 +1,81 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{url}
+\usepackage{subfigure}
+\usepackage{booktabs,threeparttable,multirow}
+
+% new math operators
+\DeclareMathOperator{\abs}{abs}
+
+% todo command
+\usepackage{marginnote}
+\newcounter{todocnt}
+\newcommand{\Sim}{\textsc{Simon}} 
+\setcounter{todocnt}{0}
+\newcommand{\todo}[1]{\stepcounter{todocnt}{\tt {[#1]}} \marginpar{{$\blacksquare$ \thetodocnt}}}  
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+\IEEEoverridecommandlockouts
+\begin{document}
+
+\title{Countermeasures against co-location attempts in the cloud}
+
+
+\author{\IEEEauthorblockN{Dolan Murvihill, Nathan Wells
+}
+\IEEEauthorblockA{Worcester Polytechnic Institute, 
+Worcester, MA 01609, USA\\
+Email: \texttt{\{dm, nhwells\}@wpi.edu}
+}}
+\maketitle
+
+\begin{abstract}
+Recent research has demonstrated that cloud services such as Amazon AWS do not provide perfect isolation~--- that there
+  are side channels between virtual machines that reside on the same host.
+In particular, it is possible, under some circumstances, to use cache timing information to perform a full AES key
+  recovery against a VM sharing the same cache.
+
+Other work has shown that cloud services such as Amazon AWS provision virtual machines using straightforward, often
+  predictable algorithms, and others have demonstrated that it is possible to achieve the required co-location to
+  perform a co-location attack.
+We would like to interrupt this step in the kill chain, by developing a provisioning strategy that makes co-location
+  much more difficult to force or predict, without sacrificing too much performance.
+\end{abstract}
+
+\section{Motivation}
+\todo{Know what you want to do and why that is interesting (maybe with bullet points). But do not write this section until you know what you actually have done so that the motivation fits your work.}
+
+
+
+\begin{itemize}
+  \item Amazon's EC2 service is very popular and used for by variety of customers, some of which have sensitive data.
+  \item This makes VMs on EC2 a worthwhile target.
+  \item Ristenpart et. al have demonstrated that it is possible to create a VM co-resident with a target instance and
+    that existing side-channel attacks can be employed against co-resident instances on the cloud.
+  \item We would like to focus on a method to obscure the algorithm by which instances are placed, which would make it
+    significantly harder to achieve co-location.
+  \item Alternatively, we could focus on a method which prevents the simple network-based checks used to determine if
+    two instances are co-located.
+\end{itemize}
+
+\section{Background}\label{sec:background}
+\todo{You should find and describe related work early on. Know what other people have done.}
+
+\section{Work Description}
+Here you describe the work you have performed, problems you have solved and methods you have used. There is a fine balance between brevity and conciseness and ensuring that other people, if investing the time, would be able to reproduce your results given this description.
+
+
+
+\section{Results}
+\todo{here you will present and discuss your outcomes: implementation results or measurements or other project outcomes}
+
+\section{Conclusion}
+\todo{TBD last}
+
+
+
+%\bibliographystyle{IEEEtran}
+
+\end{document}
