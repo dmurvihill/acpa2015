@@ -27,19 +27,25 @@
       model --- the online attack phase requires only co-location on the same CPU core and shared memory, but no
       explicit interactions.
     It also requires no knowledge of the plaintexts or even the ciphertexts, works against compressed-table
-      implementations for the first time, and can recover a full AES-128 key after observing just 100~encryptions
-      (2.8~seconds) and a three-minute offline analysis phase.
+      implementations for the first time, and can recover a full AES-128 key after observing just \num{100}~encryptions
+      (\num{2.8}~seconds) and a three-minute offline analysis phase.
     \par
     The cryptanalysis uses a novel attack against the Completely Fair Scheduler (CFS), the scheduler used in the Linux
       kernel, ``to observe (on average) every single memory access of the victim process.''
-    To make sense of the observed memory accesses, the attacker must train a pair of artificial neural networks on
-      training data collected from a platform that is identical to the target machine.
-    The training data size the authors used was 168,000 encryptions.
-    After the target data is collected during the online phase, the neural networks are used to perform the
-      cryptanalysis.
+    The CFS attack runs one hundred threads which spend most of their time in the ``blocked'' state, ensuring that
+      their total execution time is low and CFS will prioritize them over the victim process when they are unblocked.
+    When an attack thread wakes, it reads the memory accesses of the process that ran just before, then sets a timer to
+      wake up the next attack thread, after a short delay, then yields the CPU so that the victim process can run.
+    The goal is to unblock the next attack thread after exactly one memory access by the victim process. In the
+      authors' case, this was about \num{1500}~CPU cycles.
+    They computed the required delay empirically, using OS-specific techniques; they also used two artificial neural
+      networks, trained on about \num{168000}~encryptions using the same OS, hardware, and encryption library as the
+      target, to design noise-reduction algorithms for this step to filter out irrelevant memory accesses.
     \par
-    The attack is highly dependent on the target platform --- the authors mentioned that any deviation from their Linux
-      kernel running OpenSSL~0.9.8n on a single-core x86 CPU required significant adjustment.
+    Because of the reliance on specific operating system properties for accurate measurement, the attack is highly
+      dependent on the target platform~--- the authors mentioned that any deviation from their Linux kernel running
+      OpenSSL~0.9.8n on a single-core x86 CPU required significant adjustment.
+    OpenSSL~1.0 makes the attack significantly more difficult.
     They mentioned that even ``minor updates to the operating system'' required the attack to be re-tuned.
     \par
     They suggest that porting the attack to target other operating systems would be difficult, especially against
