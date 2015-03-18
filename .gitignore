@@ -4,6 +4,6 @@
 *.dvi
 *.log
 *.pdf
-*.fdb_latexmk
 *.fls
+*fdb_latexmk
 
