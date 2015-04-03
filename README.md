@@ -10,10 +10,12 @@ We assume that you have created a file called ~/.boto in which you store your
 To start an instance, import the module "instances" and then run
 startOneDefaultInstance().
 
-To get IP address information for a micro instance:
+To run the experiment:
 ```
 $ python cartography.py
 ```
+This will create and immediately terminate a large number of instances. Data
+will be written to "cartography_data.dat".
 
 We assume that Windows usage is possible, but we have not tried it. Sorry.
 
