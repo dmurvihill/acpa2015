@@ -2,7 +2,7 @@ import statdigest
 import numpy as np
 
 # size of bins in milliseconds
-precision = .2
+precision = .04
 
 def arbRound(num, resolution):
     return round(num / resolution) * resolution
