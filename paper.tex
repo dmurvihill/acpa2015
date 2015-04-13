@@ -20,6 +20,9 @@
 
 \hyphenation{op-tical net-works semi-con-duc-tor}
 \IEEEoverridecommandlockouts
+
+\input{preamble}
+
 \begin{document}
 
 \title{Countermeasures against co-location attempts in the cloud}
@@ -32,6 +35,7 @@ Worcester, MA 01609, USA\\
 Email: \texttt{\{dm, nhwells\}@wpi.edu}
 }}
 \maketitle
+\nocite{*}
 
 \begin{abstract}
 Recent research has demonstrated that cloud services such as Amazon AWS do not provide perfect isolation~--- that there
@@ -62,7 +66,8 @@ We repeated one aspect of a previous successful attack, and found that, surprisi
 \end{itemize}
 
 \section{Background}\label{sec:background}
-\todo{You should find and describe related work early on. Know what other people have done.}
+\bibliographystyle{plain-annote}
+\bibliography{bibliography}
 
 \section{Work Description}
 We reproduced two parts of the Ristenpart attack: first, a ``network cartography'' project that tried to find
