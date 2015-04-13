@@ -3,18 +3,10 @@
 \usepackage{url}
 \usepackage{subfigure}
 \usepackage{booktabs,threeparttable,multirow}
-<<<<<<< Updated upstream
 \usepackage{siunitx}
 \usepackage{pgfplots}
-=======
-<<<<<<< HEAD
 \usepackage{graphicx}
 \graphicspath{ {images/} }
-=======
-\usepackage{siunitx}
-\usepackage{pgfplots}
->>>>>>> origin/master
->>>>>>> Stashed changes
 
 % new math operators
 \DeclareMathOperator{\abs}{abs}
@@ -75,12 +67,12 @@ We repeated one aspect of a previous successful attack, and found that, surprisi
 
 \section{Background}\label{sec:background}
 The idea of performing cryptanalytic attacks against co-located virtual machines was discussed by Ristenpart, Shacham,
-  and Savage in 2009 \cite{ristenpart09}.
+  and Savage in 2009 \cite{ristenpart2009cloud}.
 They measure co-location success rates in Amazon Web Services (AWS), and suggest some potential attacks against
   co-located VMs.
 Zhang \cite{zhang2014cross} et al. presented a cross-VM attack using Ristenpart's attack which was able to recover an El Gamal key across
 Xen VMs.
-Irazoqui, Inci, Eisenbarth, and Sunar \cite{irazoquis2014wait} then presented a practical, fast, and realistic full key
+Irazoqui, Inci, Eisenbarth, and Sunar \cite{irazoqui2014wait} then presented a practical, fast, and realistic full key
   recovery against AES across virtual machines, based on Bernstein's \cite{bernstein2005cache} attack.
 
 Research into co-location attacks and cross-VM attacks continues to be an active research area.
@@ -91,9 +83,6 @@ We reproduced two parts of the Ristenpart attack: first, a ``network cartography
   verifying co-location.
 Our goal is to determine whether one of our instances shares a virtual machine with an arbitrary AWS instance.
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
 \subsection{Network Cartography}
 In this section, we create a “map” of instance placements by recording the private IP address of the instances after placing them.
 Our hope is this will give insight into how target instances are placed.
@@ -152,25 +141,13 @@ one to three, for t2.micro, t2.small, and t2.medium instances respectively.
 %\includegraphics[scale=.5]{2bTypeIP}
 %\caption{Plot of private IP address vs instance type in Zone 2b}
 %\end{figure}
-=======
->>>>>>> origin/master
->>>>>>> Stashed changes
-\subsection{Covert Channel}
 Our goal is to be able to discern co-location with an arbitrary instance, but we can begin by attempting to discern
   co-location with another instance under our control.
 Ristenpart et al. evaluated co-location by attempting to transmit data across a covert channel between two virtual
   machines --- in their case, by causing seeks and measuring seek times. Our approach is essentially the same.
-<<<<<<< Updated upstream
 A ``sender'' process continually reads values from random locations on the disk to send a one, and does nothing to
-=======
-<<<<<<< HEAD
-A ``sender'' process would continually read values from random locations on the disk to send a one, and do nothing to
-=======
-A ``sender'' process continually reads values from random locations on the disk to send a one, and does nothing to
->>>>>>> origin/master
->>>>>>> Stashed changes
   send a zero.
-A ``receiver'' process would constantly be reading values, and measuring the seek times.
+A ``receiver'' process is constantly reading values, and measuring the seek times.
 If the processes shared a hard drive (and thus, a host), the receiver process would be expected to observe consistently
   higher seek times while the sender is transmitting ones than while the sender is transmitting zeroes.
 Thus, successfully transmitting a message across this secret channel would imply that the virtual machines are
@@ -178,35 +155,15 @@ Thus, successfully transmitting a message across this secret channel would imply
 
 \subsubsection{Verification on Local Machine}
 Some calibration measurements were taken to make sure that the covert channel approach would work.
-<<<<<<< Updated upstream
 The ``seeker'', a short C program, was adapted from a 2007 Linux Insight article \cite{seeker07} to provide the seek
-=======
-<<<<<<< HEAD
-The ``seeker'', a short C program, was adapted from a 2007 Linux Insider article (TODO cite) to provide the seek
-=======
-The ``seeker'', a short C program, was adapted from a 2007 Linux Insight article \cite{seeker07} to provide the seek
->>>>>>> origin/master
->>>>>>> Stashed changes
   capability and measurement.
 The seeker read random locations from the disk as frequently as possible for thirty seconds, then reported the mean
   time required for each reading.
 The seeker was run one hundred times on a personal computer belonging to one of the authors, and the mean seek time
   from each sample was recorded.
 
-<<<<<<< Updated upstream
 A similar test was performed on the same personal computer that ran two seekers at once.
 One hundred samples were taken from one seeker (the ``receiver'').
-=======
-<<<<<<< HEAD
-(TODO results from laptop test)
-
-A similar test was performed on the same personal computer that ran two seekers at once.
-One hundred samples were taken from one seeker (the ``reader'').
-=======
-A similar test was performed on the same personal computer that ran two seekers at once.
-One hundred samples were taken from one seeker (the ``receiver'').
->>>>>>> origin/master
->>>>>>> Stashed changes
 The other seeker's samples were discarded.
 
 \subsubsection{Calibration on AWS}
@@ -214,25 +171,10 @@ Once we were satisfied that the seeker was performing as expected, we used it to
   t2.micro AWS instance.
 The one-seeker test and two-seeker test were each run one hundred times, and their sampling distributions were
   used to set the mean seek time ranges that corresponded to zero and one.
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-
-\subsubsection{Discovery of co-located Virtual Machines}
-(TODO \#) (TODO type) instances were set up in the (TODO az) availability zone, spread evenly across two AWS accounts.
-Each virtual machine tried to transmit (TODO \#bits) bits, at a bit rate of one per 30 seconds, to each other virtual
-  machine.
-(TODO \#) virtual machines were able to successfully transmit the message, (TODO \#) of which had one-bit transmission
-  errors in one direction, but not the other.
-We inferred these (TODO \#) pairs to be co-located.
-=======
->>>>>>> origin/master
->>>>>>> Stashed changes
 
 \section{Results}
 \subsection{Covert Channel}
 The tests we ran on our personal computer, described in Section~{mth:localcc} provided information that gave us high
-<<<<<<< Updated upstream
   confidence in the validity of the results we measured on AWS.
 
 Even if the probability distribution of the hard drive seek time was not Gaussian, such a large number of samples were
@@ -259,74 +201,17 @@ The EC2 tests exhibited a much faster overall seek time than the local tests.
 However, the one-seek and two-seek tests still exhibited dramatically different results, with the all one-seek means
   being between \SI{0.31}{ms} and \SI{0.33}{ms}, and all two-seek times between \SI{0.58}{ms} and \SI{0.61}{ms}.
 
-=======
-<<<<<<< HEAD
-  confidence in the validity of the results we measured on AWS. The sampling distribution for these tests are shown in
-  Figure~(TODO figure).
-
-Even if the probability distribution of the hard drive seek time was not Gaussian, such a large number of samples were
-  taken that the sampling distribution of means can be treated as Gaussian, according to (TODO who?)'s theorem.
-We have superimposed Gaussian functions on the histogram in Figure~(TODO figure) to demonstrate our analysis.
-
-The distributions are very narrow and widely separated, giving us high confidence in the accuracy of our message
-  transmission.
-The sampling distribution of mean seek time in the single-seeker test (transmitting zeroes) was centered on (TODO \#)
-  (TODO milliseconds), with a standard deviation of (TODO \#)(TODO milliseconds).
-For the double-seeker test (transmitting ones), the center was (TODO milliseconds) with a standard deviation of (TODO
-  milliseconds).
-Based on these calibration figures, we could read a mean seek time between (TODO milliseconds) and (TODO milliseconds)
-  as a zero, and a mean seek time between (TODO milliseconds) and (TODO milliseconds), and accomplish an error rate of
-  (TODO error rate) percent.
-=======
-  confidence in the validity of the results we measured on AWS.
-
-Even if the probability distribution of the hard drive seek time was not Gaussian, such a large number of samples were
-  taken that the sampling distribution of means can be treated as Gaussian, according to the Central Limit Theorem.
-
-The distributions are very narrow and widely separated, giving us high confidence in the accuracy of our message
-  transmission.
-The sampling distribution of mean seek time in the single-seeker test (transmitting zeroes) was centered on
-  \SI{13.36}{ms}, with a standard deviation of \SI{0.36}{ms}.
-For the double-seeker test (transmitting ones), the center was \SI{24.08}{ms} with a standard deviation of
-  \SI{1.42}{ms}.
-Based on these calibration figures, we could read a mean seek time between \SI{11.56}{ms} and \SI{15.16}{ms}
-  as a zero, and a mean seek time between \SI{16.98}{ms} and \SI{31.18}{ms} as a one, and accomplish an error rate of
-  \SI{3e-7} errors per bit transmitted.
->>>>>>> origin/master
-
 Our first calibration test on AWS produced an unexpected result; the first \num{53} samples of the one-seeker test gave
   a mean seek time between \SI{0.29}{ms} and \SI{0.31}{ms}, while the last \num{46} were all over \SI{36}{ms}.
 Sample \num{54} gave a mean of \SI{0.81}{ms}, indicating that toward the end of that sample, some condition changed
   that affected the seek time of the VM.
 The two-seeker test, which ran after the one-seeker test, showed sample means in the \SI{70}{ms} range.
 
-<<<<<<< HEAD
-Reducing the number of samples in the test to (TODO number) eliminated the shift as a factor.
-However, the test results reported extremely fast seeks, with no discernible difference between the one-seeker test and
-  the two-seeker tests.
-Details are shown in Figure~(TODO ref).
-
-(TODO figure)
-
-We believe that EC2 instances are now most often backed by Solid State Disks, which do not exhibit the seek-time
-  properties we have been trying to exploit.
-Instead of requiring an arm to physically rotate into place over a magnetic platter, SSDs provide fast, constant-time
-  random access, a property that eliminates the covert channel we were trying to communicate on.
-We believe the sudden change in seek times during the first experiment was caused by our virtual machine moving suddenly
-
-The calibration tests we ran on AWS provided a window of (TODO milliseconds)-(TODO milliseconds) for zeroes, and (TODO
-  milliseconds)-(TODO milliseconds) for ones, with a similar error rate.
-Our VM matching experiment transmitted (TODO \#bits) bits between co-located virtual machines and observed
-  (TODO \#errors) errors, a rate of (TODO error rate) percent; the deviation from the expected error rate is not
-  significant ($p = (TODO p-value)$).
-=======
 Reducing the number of samples in the test to ten eliminated the shift as a factor.
 The EC2 tests exhibited a much faster overall seek time than the local tests.
 However, the one-seek and two-seek tests still exhibited dramatically different results, with the all one-seek means
   being between \SI{0.31}{ms} and \SI{0.33}{ms}, and all two-seek times between \SI{0.58}{ms} and \SI{0.61}{ms}.
->>>>>>> origin/master
 
->>>>>>> Stashed changes
 \section{Conclusion}
 Storage drive based covert channels still represent a viable way to verify instance co-location on Amazon EC2.
 Future work would consist of running a large-scale experiment on EC2, where instances would try to communicate with
