@@ -23,6 +23,6 @@ outfile = open("hdcc_hist.dat", 'w+')
 
 outfile.write("BIN\t\tZERO\tONE\n")
 for i in range(1, len(bins)):
-   outfile.write("%.1f-%.1f\t%d\t%d\n" %
+   outfile.write("%.2f-%.2f\t%d\t%d\n" %
             (bins[i-1], bins[i], zerohist[i-1], onehist[i-1]))
 
