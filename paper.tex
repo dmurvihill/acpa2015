@@ -60,14 +60,20 @@ We repeated one aspect of a previous successful attack, and found that, surprisi
   \item Ristenpart et al. have demonstrated that it is possible to create a VM co-resident with a target instance and
     that existing side-channel attacks can be employed against co-resident instances on the cloud.
   \item We expect that Amazon has since adjusted their VM location algorithms to make the Ristenpart attack more
-    difficult. We would like to confirm that these changes have been made, by repeating the Ristenpart attack.
-  \item If time permits, we will attempt to defeat Amazon's new countermeasures, or improve on the reliability of the
-    Ristenpart attack, whatever is more appropriate.
+    difficult. We would like to assess the current viability of the Ristenpart attack on today's AWS.
 \end{itemize}
 
 \section{Background}\label{sec:background}
-\bibliographystyle{plain-annote}
-\bibliography{bibliography}
+The idea of performing cryptanalytic attacks against co-located virtual machines was discussed by Ristenpart, Shacham,
+  and Savage in 2009 \cite{ristenpart09}.
+They measure co-location success rates in Amazon Web Services (AWS), and suggest some potential attacks against
+  co-located VMs.
+Zhang \cite{zhang2014cross} et al. presented a cross-VM attack using Ristenpart's attack which was able to recover an El Gamal key across
+Xen VMs.
+Irazoqui, Inci, Eisenbarth, and Sunar \cite{irazoquis2014wait} then presented a practical, fast, and realistic full key
+  recovery against AES across virtual machines, based on Bernstein's \cite{bernstein2005cache} attack.
+
+Research into co-location attacks and cross-VM attacks continues to be an active research area.
 
 \section{Work Description}
 We reproduced two parts of the Ristenpart attack: first, a ``network cartography'' project that tried to find
@@ -145,5 +151,5 @@ Correlating these co-located instances with publicly available network propertie
 
 
 \bibliographystyle{IEEEtran}
-
+\bibliography{bibliography}
 \end{document}
