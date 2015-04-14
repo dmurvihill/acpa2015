@@ -3,6 +3,8 @@
 \usepackage{url}
 \usepackage{subfigure}
 \usepackage{booktabs,threeparttable,multirow}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
 
 % new math operators
 \DeclareMathOperator{\abs}{abs}
@@ -65,35 +67,155 @@ results. If time permits, we will try to improve on their attack.
 \todo{You should find and describe related work early on. Know what other people have done.}
 
 \section{Work Description}
-Our planned work consists of two steps: a ``network cartography'' phase which consists of repeating key measurements
-  from the Ristenpart paper, and an ``attack'' phase in which we try to maximize the probability of locating a new
-  Amazon EC2 virtual machine on the same physical host as a target.
-In an effort to accelerate the project, we will contact the authors of the original study and ask to use their source
-  code.
-\subsection{Cartography Phase}
-Our goal for this step is to find the relationship between AWS instance type and IP address.
-We will use the EC2 API to create a large number of virtual machines, record their IP addresses, and then terminate
-  them.
-We will then look for patterns between IP address allocation and instance type.
-We expect to complete this task by March 22.
-\subsection{Attack Phase}
-Following the methods of the Ristenpart paper, we will create a simplistic program to transfer information over a
-cross-VM covert channel between two VMs under our control.
-We will assume that if this method succeeds, the VMs are co-located.
-We will then try to correlate the success of this method with other relationships between the VMs, such as numerically
-  close IP addresses, or identical IP addresses for the VMs' ``domain zero'' host controller.
-We will then use those other relationships to test co-location with arbitrary VMs.
+We reproduced two parts of the Ristenpart attack: first, a ``network cartography'' project that tried to find
+  correlations between AWS instance creation parameters and IP address; and second, a ``covert channel'' approach to
+  verifying co-location.
+Our goal is to determine whether one of our instances shares a virtual machine with an arbitrary AWS instance.
 
-We will first implement a brute force attack that creates a large number of virtual machines with the same parameters,
-  and measure their co-location rate with a number of target VMs.
-We will then implement the Ristenpart et al. improvement that creates the attack virtual machines at approximately the
-  same time as the target VMs, and measure the co-location rate similarly.
-If time permits, we will implement other improvements as well.
+\subsection{Network Cartography}
+In this section, we create a “map” of instance placements by recording the private IP address of the instances after placing them.
+Our hope is this will give insight into how target instances are placed.
+This will help in the attempt to establish co-residence with these target instances.
 
-We expect to finish this task by March 29.
+From published information about EC2, we know that each availability zone has its own dedicated hardware. 
+Using this and the cartography information in Ristenpart, we hypothesize that each zone will have its own 
+range of internal IP addresses. 
+We also hypothesize that instances of the same type would fall in the same internal IP address ranges. 
+If these hypotheses are correct, an attacker could achieve co-location much more easily by finding the internal 
+IP address of the target and launching instances with similar parameters. 
+Amazon’s DNS service can be used to obtain this address from the public IP address of the target.
+
+We test our theory by launching a number of instances with different types in each availability zone. 
+We then attempt to create a set of rules that describe the likely availability zone and instance type of a given 
+private IP address.  
+With the data collected, we create a “map” of IP addresses and instance parameters that can be used to determine 
+a target’s parameters.
+
+All instances were launched in US West 2 zones a, b, and c. The t2.micro, small, and medium instance types 
+were used. 
+Of the 1011 instances launched, all fell into the same /16 prefix (172.31.0.0). 
+Instances were launched 
+in groups of 3 or 5 of each type. 
+We observed that instances of the same type launched sequentially had consecutive IP addresses, which is called 
+sequential placement locality. 
+
+While it was fairly likely that instances launched in the same zone would be placed together based on previous 
+work and knowledge of the inner workings of EC2, we were surprised to see that different instances types were launched 
+very close to each other (within the same /24 prefix). 
+Of the 48 /24 prefixes observed across the three availability zones, the vast majority contained more than one 
+instance type. 
+Additionally, a small number of m3.medium, large, and xlarge instances were launched which all fell into the same 
+/20 prefix as other instances in that zone.
+
+The following plots show the results of the data collected. 
+IP addresses are represented by their integer representation minus 2887712768, which represents the first address 
+(172.31.0.0). 
+Zone 2c occupied the 172.31.0.0/20 prefix, Zone 2a occupied 172.31.16.0/20, and Zone 2b occupied 172.31.32.0/20. 
+In (this figure), the zones are numbered one to three, with a being one.
+%\begin{figure}[h]
+%\includegraphics[scale=.5]{zoneIP}
+%\caption{Plot of private IP address vs availability zone}
+%\end{figure}
+In (these figures), the distribution of instance types in each zone is showed. The instances are numbered from 
+one to three, for t2.micro, t2.small, and t2.medium instances respectively.
+%\begin{figure}[h]
+%\includegraphics[scale=.5]{2cTypeIP}
+%\caption{Plot of private IP address vs instance type in Zone 2c}
+%\end{figure}
+%\begin{figure}[h]
+%\includegraphics[scale=.5]{2aTypeIP}
+%\caption{Plot of private IP address vs instance type in Zone 2a}
+%\end{figure}
+%\begin{figure}[h]
+%\includegraphics[scale=.5]{2bTypeIP}
+%\caption{Plot of private IP address vs instance type in Zone 2b}
+%\end{figure}
+\subsection{Covert Channel}
+Our goal is to be able to discern co-location with an arbitrary instance, but we can begin by attempting to discern
+  co-location with another instance under our control.
+Ristenpart et al. evaluated co-location by attempting to transmit data across a covert channel between two virtual
+  machines --- in their case, by causing seeks and measuring seek times. Our approach is essentially the same.
+A ``sender'' process would continually read values from random locations on the disk to send a one, and do nothing to
+  send a zero.
+A ``receiver'' process would constantly be reading values, and measuring the seek times.
+If the processes shared a hard drive (and thus, a host), the receiver process would be expected to observe consistently
+  higher seek times while the sender is transmitting ones than while the sender is transmitting zeroes.
+Thus, successfully transmitting a message across this secret channel would imply that the virtual machines are
+  co-located.
+
+\subsubsection{Verification on Local Machine}
+Some calibration measurements were taken to make sure that the covert channel approach would work.
+The ``seeker'', a short C program, was adapted from a 2007 Linux Insider article (TODO cite) to provide the seek
+  capability and measurement.
+The seeker read random locations from the disk as frequently as possible for thirty seconds, then reported the mean
+  time required for each reading.
+The seeker was run one hundred times on a personal computer belonging to one of the authors, and the mean seek time
+  from each sample was recorded.
+
+(TODO results from laptop test)
+
+A similar test was performed on the same personal computer that ran two seekers at once.
+One hundred samples were taken from one seeker (the ``reader'').
+The other seeker's samples were discarded.
+
+\subsubsection{Calibration on AWS}
+Once we were satisfied that the seeker was performing as expected, we used it to calibrate the covert channel on a
+  t2.micro AWS instance.
+The one-seeker test and two-seeker test were each run one hundred times, and their sampling distributions were
+  used to set the mean seek time ranges that corresponded to zero and one.
+
+\subsubsection{Discovery of co-located Virtual Machines}
+(TODO \#) (TODO type) instances were set up in the (TODO az) availability zone, spread evenly across two AWS accounts.
+Each virtual machine tried to transmit (TODO \#bits) bits, at a bit rate of one per 30 seconds, to each other virtual
+  machine.
+(TODO \#) virtual machines were able to successfully transmit the message, (TODO \#) of which had one-bit transmission
+  errors in one direction, but not the other.
+We inferred these (TODO \#) pairs to be co-located.
 
 \section{Results}
-\todo{here you will present and discuss your outcomes: implementation results or measurements or other project outcomes}
+\subsection{Covert Channel}
+The tests we ran on our personal computer, described in Section~{mth:localcc} provided information that gave us high
+  confidence in the validity of the results we measured on AWS. The sampling distribution for these tests are shown in
+  Figure~(TODO figure).
+
+Even if the probability distribution of the hard drive seek time was not Gaussian, such a large number of samples were
+  taken that the sampling distribution of means can be treated as Gaussian, according to (TODO who?)'s theorem.
+We have superimposed Gaussian functions on the histogram in Figure~(TODO figure) to demonstrate our analysis.
+
+The distributions are very narrow and widely separated, giving us high confidence in the accuracy of our message
+  transmission.
+The sampling distribution of mean seek time in the single-seeker test (transmitting zeroes) was centered on (TODO \#)
+  (TODO milliseconds), with a standard deviation of (TODO \#)(TODO milliseconds).
+For the double-seeker test (transmitting ones), the center was (TODO milliseconds) with a standard deviation of (TODO
+  milliseconds).
+Based on these calibration figures, we could read a mean seek time between (TODO milliseconds) and (TODO milliseconds)
+  as a zero, and a mean seek time between (TODO milliseconds) and (TODO milliseconds), and accomplish an error rate of
+  (TODO error rate) percent.
+
+Our first calibration test on AWS produced an unexpected result; the first \num{53} samples of the one-seeker test gave
+  a mean seek time between \SI{0.29}{ms} and \SI{0.31}{ms}, while the last \num{46} were all over \SI{36}{ms}.
+Sample \num{54} gave a mean of \SI{0.81}{ms}, indicating that toward the end of that sample, some condition changed
+  that affected the seek time of the VM.
+The two-seeker test, which ran after the one-seeker test, showed sample means in the \SI{70}{ms} range.
+
+Reducing the number of samples in the test to (TODO number) eliminated the shift as a factor.
+However, the test results reported extremely fast seeks, with no discernible difference between the one-seeker test and
+  the two-seeker tests.
+Details are shown in Figure~(TODO ref).
+
+(TODO figure)
+
+We believe that EC2 instances are now most often backed by Solid State Disks, which do not exhibit the seek-time
+  properties we have been trying to exploit.
+Instead of requiring an arm to physically rotate into place over a magnetic platter, SSDs provide fast, constant-time
+  random access, a property that eliminates the covert channel we were trying to communicate on.
+We believe the sudden change in seek times during the first experiment was caused by our virtual machine moving suddenly
+
+The calibration tests we ran on AWS provided a window of (TODO milliseconds)-(TODO milliseconds) for zeroes, and (TODO
+  milliseconds)-(TODO milliseconds) for ones, with a similar error rate.
+Our VM matching experiment transmitted (TODO \#bits) bits between co-located virtual machines and observed
+  (TODO \#errors) errors, a rate of (TODO error rate) percent; the deviation from the expected error rate is not
+  significant ($p = (TODO p-value)$).
 
 \section{Conclusion}
 \todo{TBD last}
